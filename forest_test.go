@@ -91,7 +91,7 @@ func TestSum(t *testing.T) {
 	}
 }
 
-func TestProduct(t *testing.T) {
+func TestIntersection(t *testing.T) {
 	text1 := "Hello world! :)"
 	text2 := "This is a test."
 
@@ -101,11 +101,38 @@ func TestProduct(t *testing.T) {
 	f2 := New(3)
 	f2.Learn(text2)
 
-	ngrams := getNGrams(Product(f1, f2).parent)
+	ngrams := getNGrams(Intersection(f1, f2).parent)
 	if !compare(ngrams, map[string]int{
 		"e": 1,
-		" ": 3,
+		" ": 2,
 	}) {
 		t.Errorf("Incorrect ngram counts: %v", ngrams)
+	}
+}
+
+func TestUnionIntersectionDistributivity(t *testing.T) {
+	text1 := "Hello world! :)"
+	text2 := "This is a test."
+	text3 := "My tailor is rich!"
+
+	f1 := New(2)
+	f1.Learn(text1)
+	f2 := New(3)
+	f2.Learn(text2)
+	f3 := New(4)
+	f3.Learn(text3)
+
+	f5 := Intersection(Union(f1, f2), f3)
+	f6 := Union(Intersection(f1, f3), Intersection(f2, f3))
+
+	if ngrams5, ngrams6 := getNGrams(f5.parent), getNGrams(f6.parent); !compare(ngrams5, ngrams6) {
+		t.Errorf("Product should be distributive over Sum. %v != %v", ngrams5, ngrams6)
+	}
+
+	f7 := Union(Intersection(f1, f2), f3)
+	f8 := Intersection(Union(f1, f3), Union(f2, f3))
+
+	if !compare(getNGrams(f7.parent), getNGrams(f8.parent)) {
+		t.Error("Sum should be distributive over Product.")
 	}
 }
