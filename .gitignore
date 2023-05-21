@@ -23,3 +23,6 @@ go.work
 # VSCode stuff
 .devcontainer
 .vscode
+
+# Data directories
+data
