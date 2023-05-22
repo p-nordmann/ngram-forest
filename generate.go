@@ -51,13 +51,13 @@ func sample(density []int) int {
 	var total int
 	var stairs []int
 	for _, d := range density {
-		stairs = append(stairs, d)
+		stairs = append(stairs, total)
 		total += d
 	}
 	dice := rand.Intn(total)
 	for k, stair := range stairs {
-		if dice >= stair {
-			return k
+		if dice < stair {
+			return k - 1
 		}
 	}
 	return len(stairs) - 1
