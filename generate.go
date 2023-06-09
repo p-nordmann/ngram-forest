@@ -71,7 +71,7 @@ func (f Forest) Predict(context string) map[Token]int {
 		}
 		suffix := context[len(context)-length:]
 		children, ok := f.findChildren(suffix)
-		if ok {
+		if ok && len(children) > 0 {
 			density := make(map[Token]int)
 			for token, child := range children {
 				density[token] = child.count
