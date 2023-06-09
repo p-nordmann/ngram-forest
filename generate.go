@@ -66,6 +66,9 @@ func sample(density []int) int {
 // Predicts next token probability, up to a constant multiplicative factor.
 func (f Forest) Predict(context string) map[Token]int {
 	for length := f.maxDepth; length >= 0; length-- {
+		if len(context) < length {
+			continue
+		}
 		suffix := context[len(context)-length:]
 		children, ok := f.findChildren(suffix)
 		if ok {
