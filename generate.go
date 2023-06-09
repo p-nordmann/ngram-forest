@@ -62,3 +62,31 @@ func sample(density []int) int {
 	}
 	return len(stairs) - 1
 }
+
+// Predicts next token probability, up to a constant multiplicative factor.
+func (f Forest) Predict(context string) map[Token]int {
+	for length := f.maxDepth; length >= 0; length-- {
+		suffix := context[len(context)-length:]
+		children, ok := f.findChildren(suffix)
+		if ok {
+			density := make(map[Token]int)
+			for token, child := range children {
+				density[token] = child.count
+			}
+			return density
+		}
+	}
+	return nil // Cannot actually happen.
+}
+
+func (f Forest) findChildren(suffix string) (map[Token]*Node, bool) {
+	node := &f.parent
+	for _, token := range suffix {
+		child, ok := node.children[Token(token)]
+		if !ok {
+			return nil, false
+		}
+		node = child
+	}
+	return node.children, true
+}
